@@ -1,24 +1,30 @@
-# main criado apenas a critério de testes para validação dos estudos
-from models import Usuario, Evento, Ingresso
+from fastapi import FastAPI
 
-print("CRIANDO USUÁRIOS E EVENTOS...")
-usuario1 = Usuario(cpf="111.222.333-44", nome="João da Silva")
-evento_show = Evento(nome="Show de Rock", cidade="Goiânia", data="28/09/2025", tipo="Show", capacidade=100)
+# Cria uma instância da aplicação FastAPI
+app = FastAPI()
 
-print("\nEXIBINDO DETALHES INICIAIS...")
-usuario1.mostrar_infos()
-evento_show.exibir_detalhes()
+@app.get("/")
+def read_root():
+    return {"message": "Olá! Bem-vindo à API do App de Ingressos!"}
 
-print("\nVENDENDO INGRESSOS...")
-evento_show.vender_ingressos(1)
+# Dados mockados (simulando um banco de dados)
+db_eventos = [
+    {"id": 1, "nome": "Show de Rock", "cidade": "Goiânia", "data": "2025-09-28"},
+    {"id": 2, "nome": "Peça de Teatro", "cidade": "Anápolis", "data": "2025-10-15"},
+    {"id": 3, "nome": "Jogo de Futebol", "cidade": "Goiânia", "data": "2025-09-30"},
+]
 
-print("\nCRIANDO O OBJETO INGRESSO...")
-ingresso_joao = Ingresso(evento=evento_show, usuario=usuario1)
+# Endpoint para listar todos os eventos
+@app.get("/eventos")
+def listar_eventos():
+    return db_eventos
 
-usuario1.ingressos_comprados.append(ingresso_joao)
-
-print("\nEXIBINDO INFORMAÇÕES FINAIS...")
-ingresso_joao.exibir_resumo()
-
-print(f"\nO usuário {usuario1.nome} tem {len(usuario1.ingressos_comprados)} ingresso(s).")
-evento_show.exibir_detalhes()
+# Endpoint para buscar um evento por ID
+# O {id} na URL é um "path parameter". O FastAPI o passa para a função.
+# O "id: int" é um Type Hint que valida que o id deve ser um inteiro.
+@app.get("/eventos/{id}")
+def buscar_evento_por_id(id: int):
+    for evento in db_eventos:
+        if evento["id"] == id:
+            return evento
+    return {"message": "Evento não encontrado"}
