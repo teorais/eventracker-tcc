@@ -1,53 +1,35 @@
-class Usuario:
-    
-    def __init__(self, cpf, nome):
-        self.nome = nome
-        self.cpf = cpf
-        self.ingressos_comprados = []
-        
-    def mostrar_infos(self):
-        print(f"Nome: {self.nome}")
-        print(f"CPF: {self.cpf}")
-        
-###############################################################################
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+from database import Base
 
-class Evento:
+class Usuario(Base):
+    __tablename__ = "usuarios"
+
+    id = Column(Integer, primary_key=True, index=True)
+    cpf = Column(String, unique=True, index=True)
+    nome = Column(String)
     
-    def __init__(self, nome, cidade, data, tipo, capacidade):
-        self.nome = nome
-        self.cidade = cidade
-        self.data = data
-        self.tipo = tipo
-        self.capacidade = capacidade
-        self.ingressos_vendidos = 0
-    
-    def exibir_detalhes(self):
-        print(f"Nome: {self.nome}")
-        print(f"Cidade: {self.cidade}")
-        print(f"Data: {self.data}")
-        print(f"Tipo: {self.tipo}")
-        print(f"Capacidade: {self.capacidade}")
-        print(f"Vendidos: {self.ingressos_vendidos} de {self.capacidade}")
-        
-    def vender_ingressos(self, quantidade):
-        if(self.ingressos_vendidos + quantidade > self.capacidade):
-            print(f"A quantidade de ingressos desejada excede a capacidade máxima do evento. \nIngressos disponíveis: {self.capacidade - self.ingressos_vendidos}")
-        else:
-            self.ingressos_vendidos += quantidade
-            print(f"{quantidade} ingresso(s) vendido(s) para o evento {self.nome}.")
-            
-    def verificar_disponibilidade(self):
-        return self.ingressos_vendidos < self.capacidade
-        
-###############################################################################
-        
-class Ingresso:
-    
-    def __init__(self, evento: Evento, usuario: Usuario):
-        self.evento = evento
-        self.usuario = usuario
-        
-    def exibir_resumo(self):
-        print("--- Resumo do Ingresso ---")
-        print(f"Evento: {self.evento.nome} ({self.evento.data})")
-        print(f"Comprador: {self.usuario.nome} (CPF: {self.usuario.cpf})")
+    # ingressos = relationship("Ingresso", back_populates="comprador")
+
+class Evento(Base):
+    __tablename__ = "eventos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String)
+    cidade = Column(String)
+    data = Column(String)
+    tipo = Column(String)
+    capacidade = Column(Integer)
+    ingressos_vendidos = Column(Integer, default=0)
+
+    # ingressos = relationship("Ingresso", back_populates="evento")
+
+class Ingresso(Base):
+    __tablename__ = "ingressos"
+
+    id = Column(Integer, primary_key=True, index=True)
+    id_evento = Column(Integer, ForeignKey("eventos.id"))
+    id_usuario = Column(Integer, ForeignKey("usuarios.id"))
+
+    # evento = relationship("Evento", back_populates="ingressos")
+    # comprador = relationship("Usuario", back_populates="ingressos")
