@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from database import Base
+from .database import Base
 
 class Usuario(Base):
     __tablename__ = "usuarios"
@@ -8,6 +8,7 @@ class Usuario(Base):
     id = Column(Integer, primary_key=True, index=True)
     cpf = Column(String, unique=True, index=True)
     nome = Column(String)
+    senha_hash = Column(String)
     
     # ingressos = relationship("Ingresso", back_populates="comprador")
 

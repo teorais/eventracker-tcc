@@ -1,5 +1,5 @@
-from database import engine, Base
-import models
+from .database import engine, Base
+from . import models
 
 print("Criando tabelas no banco de dados...")
 
