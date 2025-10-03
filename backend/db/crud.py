@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
-from . import models, schemas, security
+
+from backend.core import security
+from backend.db import models, schemas
 
 def get_user_by_cpf(db: Session, cpf: str) -> models.Usuario | None:
     return db.query(models.Usuario).filter(models.Usuario.cpf == cpf).first()
