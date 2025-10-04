@@ -1,13 +1,51 @@
-.venv/
-venv/
-
-__pycache__/
-*.pyc
-
+# Arquivo de segredos e configurações locais
 .env
 
+# Arquivos de IDEs e Editores
 .vscode/
 .idea/
 
+# Arquivos de sistema operacional
 .DS_Store
 Thumbs.db
+
+# -------------------------
+# Regras específicas do Python
+# -------------------------
+
+# Ambiente virtual
+.venv/
+venv/
+
+# Cache de bytecode do Python
+__pycache__/
+*.pyc
+
+# -------------------------
+# Regras específicas do Flutter
+# -------------------------
+
+# Arquivos e pastas gerados pelo Flutter/Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Dependências nativas do iOS (CocoaPods)
+ios/Pods/
+ios/Flutter/ephemeral/
+ios/.symlinks/
+ios/Runner.xcworkspace
+ios/Runner.xcodeproj/project.xcworkspace/
+ios/Runner.xcodeproj/xcuserdata/
+
+# Dependências nativas do Android (Gradle)
+android/.gradle/
+android/app/src/main/jniLibs/
+android/local.properties
+android/.idea/
+
+# Arquivos de build específicos da Web
+web/build/
+web/.dart_tool/
