@@ -22,7 +22,7 @@ app = FastAPI()
 def create_user_endpoint(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_cpf(db, cpf=user.cpf)
     if db_user:
-        raise HTTPException(status_code=400, detail="CPF já cadastrado")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="CPF já cadastrado")
     return crud.create_user(db=db, user=user)
 
 # Endpoint para login
@@ -60,7 +60,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         raise credentials_exception
     return user
 
-# Endpoint protegido de exemplo
+# Endpoint protegido
 @app.get("/users/me/", response_model=schemas.User)
 async def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     return current_user
