@@ -18,7 +18,7 @@ def get_db():
 app = FastAPI()
 
 # Endpoint para criar um usuário
-@app.post("/users/", response_model=schemas.User)
+@app.post("/users/", response_model=schemas.User, status_code=status.HTTP_201_CREATED)
 def create_user_endpoint(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_cpf(db, cpf=user.cpf)
     if db_user:
@@ -42,7 +42,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db:
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # Dependência para obter o usuário atual
-async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Não foi possível validar as credenciais",
@@ -62,5 +62,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
 
 # Endpoint protegido
 @app.get("/users/me/", response_model=schemas.User)
-async def read_users_me(current_user: schemas.User = Depends(get_current_user)):
+def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     return current_user
+
+@app.post("/events", response_model=schemas.Event, status_code=status.HTTP_201_CREATED)
+def create_new_event(event: schemas.EventCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user)):
+    return crud.create_event(db=db, event=event)
+
+@app.get("/events", response_model=list[schemas.Event])
+def get_all_events(db: Session = Depends(get_db)):
+    return crud.get_events(db=db)

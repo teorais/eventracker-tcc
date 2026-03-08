@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
+import 'package:flutter_app/providers/events_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
@@ -141,19 +142,81 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 1. "Assistimos" ao provedor de eventos.
+    // O asyncEvents é do tipo AsyncValue<List<Event>>
+    final asyncEvents = ref.watch(eventsProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Página Inicial'),
+        title: const Text('Eventos Disponíveis'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () {
+              // Chama o logout do nosso authProvider
               ref.read(authProvider.notifier).logout();
             },
           ),
         ],
       ),
-      body: const Center(child: Text('Você está logado!')),
+      // 2. O .when() nos obriga a tratar os 3 estados possíveis:
+      body: asyncEvents.when(
+        // CASO DE SUCESSO: Temos a lista de eventos
+        data: (events) {
+          if (events.isEmpty) {
+            return const Center(child: Text('Nenhum evento cadastrado ainda.'));
+          }
+
+          return ListView.builder(
+            itemCount: events.length,
+            itemBuilder: (context, index) {
+              final event = events[index];
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: ListTile(
+                  leading: const CircleAvatar(child: Icon(Icons.event)),
+                  title: Text(
+                    event.nome,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text('${event.cidade} • ${event.data}'),
+                  trailing: Text(
+                    'R\$ ${event.preco.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onTap: () {
+                    // Futuramente: Navegar para detalhes do evento
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Selecionou: ${event.nome}')),
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
+        // CASO DE ERRO: Algo deu errado na requisição (ex: backend desligado)
+        error:
+            (err, stack) => Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.red, size: 60),
+                  const SizedBox(height: 16),
+                  Text('Erro ao carregar eventos: $err'),
+                  ElevatedButton(
+                    onPressed: () => ref.refresh(eventsProvider),
+                    child: const Text('Tentar Novamente'),
+                  ),
+                ],
+              ),
+            ),
+        // CASO DE CARREGAMENTO: A requisição ainda está em curso
+        loading: () => const Center(child: CircularProgressIndicator()),
+      ),
     );
   }
 }

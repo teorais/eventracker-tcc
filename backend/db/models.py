@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
 
 from backend.db.database import Base
@@ -21,6 +21,7 @@ class Evento(Base):
     cidade = Column(String)
     data = Column(String)
     tipo = Column(String)
+    preco = Column(Numeric(14,2))
     capacidade = Column(Integer)
     ingressos_vendidos = Column(Integer, default=0)
 
