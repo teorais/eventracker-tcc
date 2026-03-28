@@ -21,8 +21,11 @@ app = FastAPI()
 @app.post("/users/", response_model=schemas.User, status_code=status.HTTP_201_CREATED)
 def create_user_endpoint(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_cpf(db, cpf=user.cpf)
+    db_user_email = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="CPF já cadastrado")
+    if db_user_email:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email já cadastrado")
     return crud.create_user(db=db, user=user)
 
 # Endpoint para login

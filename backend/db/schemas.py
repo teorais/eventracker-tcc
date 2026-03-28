@@ -5,11 +5,19 @@ class UserCreate(BaseModel):
     cpf: str
     nome: str
     senha: str
+    email: str
+    telefone: str
+    data_nascimento: str
+    genero: str
 
 class User(BaseModel):
     id: int
     cpf: str
     nome: str
+    email: str
+    telefone: str
+    data_nascimento: str
+    genero: str
 
     class Config:
         from_attributes = True

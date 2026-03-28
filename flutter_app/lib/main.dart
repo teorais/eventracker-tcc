@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/providers/auth_provider.dart';
 import 'package:flutter_app/providers/events_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_app/pages/add_event_page.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -216,6 +217,16 @@ class HomePage extends ConsumerWidget {
             ),
         // CASO DE CARREGAMENTO: A requisição ainda está em curso
         loading: () => const Center(child: CircularProgressIndicator()),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddEventPage()),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

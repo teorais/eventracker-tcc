@@ -9,6 +9,10 @@ class Usuario(Base):
     id = Column(Integer, primary_key=True, index=True)
     cpf = Column(String, unique=True, index=True)
     nome = Column(String)
+    email = Column(String, unique=True, index=True)
+    telefone = Column(String)
+    data_nascimento = Column(String)
+    genero = Column(String)
     senha_hash = Column(String)
     
     # ingressos = relationship("Ingresso", back_populates="comprador")
@@ -24,6 +28,7 @@ class Evento(Base):
     preco = Column(Numeric(14,2))
     capacidade = Column(Integer)
     ingressos_vendidos = Column(Integer, default=0)
+    
 
     # ingressos = relationship("Ingresso", back_populates="evento")
 
